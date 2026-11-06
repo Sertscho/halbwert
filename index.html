@@ -121,7 +121,7 @@ dialog .small a{color:var(--ac)}
       <button type="button" class="sbtn danger" id="wipe">Alle Einträge löschen</button>
       <button type="submit" class="sbtn main">Fertig</button>
     </div>
-    <p class="small">Richtwerte, keine medizinische Beratung. Schlaffreundlich heißt unter 30 mg Restkoffein, abgeleitet aus einer Meta-Analyse von 24 Studien (<a href="https://pubmed.ncbi.nlm.nih.gov/36870101/" target="_blank" rel="noopener">Gardiner 2023</a>: ~107 mg Kaffee mindestens 8,8 h vor dem Schlafen). Halbwertszeit nach <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8914174/" target="_blank" rel="noopener">Grzegorzewski 2022</a>. Ninja- und McCafé-Werte sind Schätzungen, Red Bull (80 mg, 1000 mg Taurin) und Monster Ultra White (150 mg) sind Herstellerangaben.</p>
+    <p class="small">Richtwerte, keine medizinische Beratung. Schlaffreundlich heißt unter 30 mg Restkoffein, abgeleitet aus einer Meta-Analyse von 24 Studien (<a href="https://pubmed.ncbi.nlm.nih.gov/36870101/" target="_blank" rel="noopener">Gardiner 2023</a>: ~107 mg Kaffee mindestens 8,8 h vor dem Schlafen). Halbwertszeit nach <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8914174/" target="_blank" rel="noopener">Grzegorzewski 2022</a>. Ninja- und McCafé-Werte sind Schätzungen, Red Bull (80 mg, 1000 mg Taurin) und Monster Ultra White (150 mg) sind Herstellerangaben. Cola Zero 0,33 l: 33 mg (10 mg/100 ml), Schwarztee: 50 mg pro Tasse (EFSA-Richtwert).</p>
   </form>
 </dialog>
 
@@ -171,6 +171,8 @@ const DRINKS=()=>[
   {id:'mg',name:'Cappu groß',full:'McCafé Cappuccino groß',mg:140},
   {id:'rb',name:'Red Bull SF',full:'Red Bull Sugarfree',mg:80},
   {id:'mo',name:'Monster White',full:'Monster Ultra White',mg:150},
+  {id:'cz',name:'Cola Zero',full:'Cola Zero 0,33 l',sub:'0,33 l',mg:33},
+  {id:'st',name:'Schwarztee',full:'Schwarztee',sub:'Tasse',mg:50},
 ];
 const byId=id=>DRINKS().find(d=>d.id===id)||{name:id};
 
@@ -179,7 +181,8 @@ const cup=(w,steam)=>`<path d="M${16-w} 14h${2*w}v4a${w} ${w} 0 0 1-${2*w} 0z" f
 const paper=(top,y)=>`<path d="M${16-top} ${y+2}h${2*top}l-1.3 ${25-y}h-${2*top-2.6}z" fill="#EFE6DA"/><path d="M${16-top+.6} ${y+8}h${2*top-1.2}l-.4 5h-${2*top-2}z" fill="#B07A4F"/><rect x="${16-top-1}" y="${y}" width="${2*top+2}" height="2.4" rx="1" fill="#E6C9A0"/>`;
 const can=(w,y,body,band)=>`<rect x="${16-w}" y="${y}" width="${2*w}" height="${28-y}" rx="2" fill="${body}"/><rect x="${16-w+1.2}" y="${y-1.2}" width="${2*w-2.4}" height="1.6" rx=".8" fill="#8D97AC"/><rect x="${16-w}" y="${y+6}" width="${2*w}" height="${(28-y)/3}" fill="${band}"/>`;
 const svg=b=>`<svg viewBox="0 0 32 32" aria-hidden="true">${b}</svg>`;
-const PIC={n1:svg(cup(5,[16])),n2:svg(cup(6.5,[13.5,18.5])),mk:svg(paper(5,10)),mg:svg(paper(6.5,5)),rb:svg(can(4,6,'#9FB0C8','#2F4A7A')),mo:svg(can(5.5,4,'#EDE6DC','#C9BFB2'))};
+const PIC={n1:svg(cup(5,[16])),n2:svg(cup(6.5,[13.5,18.5])),mk:svg(paper(5,10)),mg:svg(paper(6.5,5)),rb:svg(can(4,6,'#9FB0C8','#2F4A7A')),mo:svg(can(5.5,4,'#EDE6DC','#C9BFB2')),cz:svg(can(4.5,6,'#1E1E22','#B8322B')),
+  st:svg(cup(5.5,[]).replace('#B07A4F','#8E4E24')+'<path d="M19.5 14.5V8.5" stroke="#E6C9A0" stroke-width="1"/><rect x="18" y="5" width="4" height="4" rx=".6" fill="#E6C9A0"/>')};
 const ICON={ring:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2.5 12.5a6.5 6.5 0 1 1 11 0"/><path d="M8 10l3-4"/></svg>',
   curve:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 14 L4 5 L6 8 L8 3 L15 13"/></svg>',
   gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2.2" fill="#1B2A44"/><circle cx="15" cy="12" r="2.2" fill="#1B2A44"/><circle cx="7" cy="18" r="2.2" fill="#1B2A44"/></svg>'};

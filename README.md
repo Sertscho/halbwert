@@ -6,7 +6,7 @@ Zeigt, wie viel Koffein gerade in deinem Körper ist und ab wann du schlaffreund
 
 **Aufs iPhone:** Link in Safari öffnen → Teilen → „Zum Home-Bildschirm“.
 
-- Getränke: Ninja Luxe Single/Double (Gramm einstellbar), McCafé Cappuccino klein/groß, Red Bull Sugarfree, Monster Ultra White
+- Getränke: Ninja Luxe Single/Double (Gramm einstellbar), McCafé Cappuccino klein/groß, Red Bull Sugarfree, Monster Ultra White, Cola Zero 0,33 l (33 mg), Schwarztee (50 mg/Tasse, EFSA)
 - Ansicht: Abbaukurve oder Ring (Button oben rechts)
 - Daten bleiben nur auf dem Gerät
 
