@@ -20,7 +20,7 @@
   color-scheme:dark;
   --bg:#101A2C; --card:#172338; --edge:#24344F; --grid:#22304A;
   --tx:#EFE6DA; --mu:#8D97AC; --mo:#B07A4F; --ac:#E6C9A0;
-  --good:#7FBF8E; --warn:#E39A5C;
+  --good:#7FBF8E; --warn:#E39A5C; --red:#E0574B;
   --f-ui:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
   --f-disp:"Instrument Serif",Georgia,serif;
   --f-mono:"JetBrains Mono",ui-monospace,monospace;
@@ -50,15 +50,15 @@ h3{margin:0;font-family:var(--f-disp);font-style:italic;font-weight:400;font-siz
 .now .r{text-align:right;font-size:13px;color:var(--mu)}
 .now .r b{display:block;font-size:18px;color:var(--tx)}
 svg.chart{width:100%;height:auto;display:block}
-.ring{position:relative;width:230px;max-width:100%;height:230px;margin:0 auto}
-.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.ring .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.ring .mg{font-family:var(--f-disp);font-size:68px;line-height:1}
-.ring .u{color:var(--mu);font-size:13px}
-.status{text-align:center;font-size:15px;margin-top:10px}
-.status b{color:var(--ac);font-weight:600}
-.status span{color:var(--mu);font-size:13px}
-@media (prefers-reduced-motion:no-preference){.view{animation:fade .25s ease}@keyframes fade{from{opacity:.3}}}
+.rw{display:grid;grid-template-columns:1fr minmax(0,200px) 1fr;align-items:center;gap:6px}
+.rw svg{width:100%;height:auto;display:block}
+.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.side.r{text-align:right}
+.st small{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)}
+.st b{display:block;font-family:var(--f-disp);font-weight:400;font-size:24px;line-height:1.05}
+.st em{display:block;font-style:normal;font-size:11px;color:var(--mu);min-height:1em}
+.st.ok b{color:var(--good)} .st.no b{color:var(--warn)} .st.red b{color:var(--red)}
+.legend{margin:4px 0 0;text-align:center;font-size:11px;color:var(--mu)}
 
 .tip{background:var(--card);border-radius:14px;padding:12px 14px;font-size:14px}
 .tip b{color:var(--ac);font-weight:600}
@@ -78,7 +78,7 @@ svg.chart{width:100%;height:auto;display:block}
 .log li{display:flex;align-items:center;gap:8px;font-size:14px;padding:4px 0;border-bottom:1px solid #1A2740}
 .log li .ic svg{width:22px;height:22px}
 .log .nm{flex:1;min-width:0}
-.log input[type=time]{background:transparent;border:1px solid transparent;border-radius:8px;padding:2px 4px;font-family:var(--f-mono);font-size:14px;color:var(--tx);width:5.6em}
+.log input[type=time]{background:transparent;border:1px solid transparent;border-radius:8px;padding:2px 4px;font-family:var(--f-mono);font-size:14px;color:var(--tx);width:auto;min-width:4.6em}
 .log input[type=time]:hover,.log input[type=time]:focus{border-color:var(--edge)}
 .log .del{background:none;border:0;cursor:pointer;color:var(--mu);font-size:15px;padding:4px 8px}
 .log .del:hover{color:var(--tx)}
@@ -180,7 +180,7 @@ const paper=(top,y)=>`<path d="M${16-top} ${y+2}h${2*top}l-1.3 ${25-y}h-${2*top-
 const can=(w,y,body,band)=>`<rect x="${16-w}" y="${y}" width="${2*w}" height="${28-y}" rx="2" fill="${body}"/><rect x="${16-w+1.2}" y="${y-1.2}" width="${2*w-2.4}" height="1.6" rx=".8" fill="#8D97AC"/><rect x="${16-w}" y="${y+6}" width="${2*w}" height="${(28-y)/3}" fill="${band}"/>`;
 const svg=b=>`<svg viewBox="0 0 32 32" aria-hidden="true">${b}</svg>`;
 const PIC={n1:svg(cup(5,[16])),n2:svg(cup(6.5,[13.5,18.5])),mk:svg(paper(5,10)),mg:svg(paper(6.5,5)),rb:svg(can(4,6,'#9FB0C8','#2F4A7A')),mo:svg(can(5.5,4,'#EDE6DC','#C9BFB2'))};
-const ICON={ring:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/></svg>',
+const ICON={ring:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2.5 12.5a6.5 6.5 0 1 1 11 0"/><path d="M8 10l3-4"/></svg>',
   curve:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 14 L4 5 L6 8 L8 3 L15 13"/></svg>',
   gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2.2" fill="#1B2A44"/><circle cx="15" cy="12" r="2.2" fill="#1B2A44"/><circle cx="7" cy="18" r="2.2" fill="#1B2A44"/></svg>'};
 
@@ -224,11 +224,38 @@ function chart(c){
    <circle cx="${X(c.now)}" cy="${Y(c.lvl)}" r="5" fill="#E6C9A0" stroke="#101A2C" stroke-width="2"/>
   </svg>`;
 }
+// Ring-Ansicht: Messinstrument 0–400 mg, grün bis 30, rot ab 300, Kennzahlen links/rechts
+const RED=300,GMAX=400;
+const P=(cx,cy,r,deg)=>[cx+r*Math.sin(deg*Math.PI/180),cy-r*Math.cos(deg*Math.PI/180)];
+const arc=(cx,cy,r,a0,a1)=>{const[x0,y0]=P(cx,cy,r,a0),[x1,y1]=P(cx,cy,r,a1);return `M${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 ${a1-a0>180?1:0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`};
+const rel=t=>t==null?'':day(t)===day(Date.now())?'heute':'morgen';
+const st=(label,val,sub,cls='')=>`<div class="st ${cls}"><small>${label}</small><b class="tabnum">${val}</b>${sub?`<em>${sub}</em>`:''}</div>`;
 function ring(c){
-  const f=Math.min(c.lvl/Math.max(200,c.lvl),1),R=96,L=2*Math.PI*R;
-  return `<div class="ring"><svg viewBox="0 0 230 230" aria-hidden="true"><circle cx="115" cy="115" r="${R}" fill="none" stroke="#1B2A44" stroke-width="15"/><circle cx="115" cy="115" r="${R}" fill="none" stroke="url(#g1)" stroke-width="15" stroke-linecap="round" stroke-dasharray="${f*L} ${L}"/><defs><linearGradient id="g1"><stop offset="0" stop-color="#7A4A2A"/><stop offset="1" stop-color="#E6C9A0"/></linearGradient></defs></svg>
-  <div class="c"><span class="mg tabnum">${Math.round(c.lvl)}</span><span class="u">mg Koffein im Körper</span></div></div>
-  <div class="status">Schlaffreundlich ab <b>${fmtD(c.clear)}</b><br><span>Praktisch raus ab ${fmtD(c.out)}</span></div>`;
+  let pk=0,pkT=c.now;for(let t=c.now-12*HR;t<=c.now+HR;t+=5*MIN){const v=HW.level(c.E,t,c.hl);if(v>pk){pk=v;pkT=t}}
+  const cx=100,cy=104,R=80,L=c.lvl,a=v=>-135+Math.min(v,GMAX)/GMAX*270;let ticks='';
+  for(let v=0;v<=GMAX;v+=10){const big=v%100===0,mid=v%50===0,[x0,y0]=P(cx,cy,R+10,a(v)),[x1,y1]=P(cx,cy,R+(big?1:mid?3:6),a(v));const col=v===RED?'#E0574B':big?'#8D97AC':'#3A4C6B';
+    ticks+=`<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${col}" stroke-width="${big?2:1}"/>`;
+    if(big){const[x,y]=P(cx,cy,R-12,a(v));ticks+=`<text x="${x.toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="${v===RED?'#E0574B':'#8D97AC'}">${v}</text>`}}
+  const red=L>=RED,[nx,ny]=P(cx,cy,R-2,a(L)),[bx,by]=P(cx,cy,R+6,a(c.atBed)),needle=red?'#E0574B':'#E6C9A0';
+  let fill=`<path d="${arc(cx,cy,R+5,-135,a(Math.min(L,LIMIT)))}" stroke="#7FBF8E" stroke-width="10" fill="none"/>`;
+  if(L>LIMIT)fill+=`<path d="${arc(cx,cy,R+5,a(LIMIT),a(Math.min(L,RED)))}" stroke="#B07A4F" stroke-width="10" fill="none"/>`;
+  if(L>RED)fill+=`<path d="${arc(cx,cy,R+5,a(RED),a(L))}" stroke="#E0574B" stroke-width="10" fill="none"/>`;
+  const lab=(deg,txt,col)=>{const[x,y]=P(cx,cy,R+18,deg);return `<text x="${x.toFixed(1)}" y="${(y+12).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="${col}">${txt}</text>`};
+  const svg=`<svg viewBox="0 0 200 190" role="img" aria-label="Messinstrument, ${Math.round(L)} mg Koffein">
+   <path d="${arc(cx,cy,R+5,-135,a(LIMIT))}" stroke="#7FBF8E" stroke-opacity=".22" stroke-width="10" fill="none"/>
+   <path d="${arc(cx,cy,R+5,a(LIMIT),a(RED))}" stroke="#1B2A44" stroke-width="10" fill="none"/>
+   <path d="${arc(cx,cy,R+5,a(RED),135)}" stroke="#E0574B" stroke-opacity=".25" stroke-width="10" fill="none"/>
+   ${L>0.5?fill:''}${ticks}
+   <line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="${needle}" stroke-width="3" stroke-linecap="round"/>
+   <circle cx="${cx}" cy="${cy}" r="6" fill="${needle}"/>
+   ${c.E.length?`<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="4" fill="none" stroke="#E6C9A0" stroke-width="1.6"><title>Wert zur Schlafenszeit</title></circle>`:''}
+   <text x="${cx}" y="${cy+46}" text-anchor="middle" font-family="Instrument Serif,Georgia,serif" font-size="34" fill="${red?'#E0574B':'#EFE6DA'}">${Math.round(L)}</text>
+   <text x="${cx}" y="${cy+60}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#8D97AC" letter-spacing=".5">MG JETZT</text>
+   ${lab(-135,'SCHLAF','#7FBF8E')}${lab(135,'ZU VIEL','#E0574B')}</svg>`;
+  const okc=c.ok?'ok':'no';
+  return `<div class="rw"><div class="side">${st('Bereit ab',fmtD(c.clear).replace('morgen ',''),c.clear>Date.now()+MIN?rel(c.clear):'',c.E.length?okc:'ok')}${st('Ganz raus',fmtD(c.out).replace('morgen ',''),c.out>Date.now()+MIN?rel(c.out):'')}</div>${svg}
+   <div class="side r">${st('Höchstwert',Math.round(pk)+' mg',pk>0.5?'um '+fmt(pkT):'',pk>=RED?'red':'')}${st('Um '+fmt(c.bed),Math.round(c.atBed)+' mg',c.E.length?(c.ok?'passt':'zu viel'):'',c.E.length?okc:'')}</div></div>
+   <p class="legend">grün = schlaffreundlich · rot = über ${RED} mg · ○ = Wert zur Schlafenszeit</p>`;
 }
 function tip(c){
   if(!c.E.length) return `Noch nichts eingetragen. Tippe unten auf dein Getränk, es wird mit der aktuellen Uhrzeit gespeichert.`;
@@ -243,7 +270,7 @@ function render(){
   const log=c.E.slice().sort((a,b)=>b.t-a.t);
   document.getElementById('app').innerHTML=`
   <div class="top"><div class="brand">Halb<i>wert</i></div><div class="btns">
-    <button type="button" class="pillbtn" id="toggle" data-view="${other}" aria-label="Ansicht wechseln zu ${other==='ring'?'Ring':'Kurve'}">${ICON[other]}${other==='ring'?'Ring':'Kurve'}</button>
+    <button type="button" class="pillbtn" id="toggle" data-view="${other}" aria-label="Ansicht wechseln zu ${other==='ring'?'Tacho':'Kurve'}">${ICON[other]}${other==='ring'?'Tacho':'Kurve'}</button>
     <button type="button" class="pillbtn round" id="gear" aria-label="Einstellungen">${ICON.gear}</button></div></div>
   <div class="view">${view}</div>
   <div class="tip">${tip(c)}</div>

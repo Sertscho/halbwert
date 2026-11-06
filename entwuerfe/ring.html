@@ -1,0 +1,148 @@
+<title>Halbwert Ring-Entwürfe</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: drei Handy-breite Karten mit je einer Ring-Variante, Kennzahlen links und rechts. Bewusst nur dunkel. */
+:root{color-scheme:dark;--page:#0B1322;--bg:#101A2C;--card:#172338;--edge:#24344F;--tx:#EFE6DA;--mu:#8D97AC;--mo:#B07A4F;--ac:#E6C9A0;--good:#7FBF8E;--red:#E0574B;--warn:#E39A5C;
+ --f-d:"Instrument Serif",Georgia,serif;--f-u:"IBM Plex Sans",system-ui,sans-serif;--f-m:"JetBrains Mono",ui-monospace,monospace}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--tx);font-family:var(--f-u);font-size:15px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+main{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1{font-family:var(--f-d);font-weight:400;font-size:clamp(30px,6vw,44px);margin:0}
+h1 i{color:var(--ac)}
+.intro{margin:0;color:var(--mu);max-width:62ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,420px));justify-content:center;gap:22px;justify-items:center}
+figure{margin:0;width:100%;max-width:390px;display:flex;flex-direction:column;gap:10px}
+figcaption b{font-size:17px;display:block}
+figcaption span{font-size:13px;color:var(--mu)}
+.scr{background:var(--bg);border:1px solid #26324D;border-radius:28px;padding:20px 14px 22px;display:flex;flex-direction:column;gap:14px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:0 4px}
+.brand{font-family:var(--f-d);font-size:28px}.brand i{color:var(--ac)}
+.pill{font-size:12px;color:var(--ac);border:1px solid #3A4C6B;background:#1B2A44;border-radius:99px;padding:4px 10px}
+.rw{display:grid;grid-template-columns:1fr minmax(0,190px) 1fr;align-items:center;gap:6px}
+.rw svg{width:100%;height:auto;display:block}
+.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.side.r{text-align:right}
+.st small{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)}
+.st b{display:block;font-family:var(--f-d);font-weight:400;font-size:24px;line-height:1.05}
+.st em{display:block;font-style:normal;font-size:11px;color:var(--mu)}
+.st.red b{color:var(--red)} .st.ok b{color:var(--good)} .st.no b{color:var(--warn)} .st.ac b{color:var(--ac)}
+.foot{font-size:13px;color:var(--mu);text-align:center;margin:0}
+.foot b{color:var(--tx);font-weight:500}
+.tabnum{font-variant-numeric:tabular-nums}
+.scn{display:flex;flex-wrap:wrap;gap:8px}
+.scn button{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:8px 14px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px}
+.scn button small{font-size:12px;color:var(--mu)}
+.scn button[aria-pressed=true]{border-color:var(--ac);box-shadow:inset 0 0 0 1px var(--ac)}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+/* Nadel im roten Bereich zittert wie im Drehzahlbegrenzer */
+.needle{transform-box:view-box}
+@media (prefers-reduced-motion:no-preference){.needle.limit{animation:limiter .11s steps(2,jump-none) infinite}}
+@keyframes limiter{0%{transform:rotate(-2.2deg)}35%{transform:rotate(1.6deg)}70%{transform:rotate(-1deg)}100%{transform:rotate(2.4deg)}}
+.note{font-size:13px;color:var(--mu);border-top:1px solid var(--edge);padding-top:12px;margin:0}
+</style>
+<main>
+<h1>Halb<i>wert</i> · Ring-Entwürfe</h1>
+<p class="intro">Die überarbeiteten Varianten A und B, rot ab 250 mg. Schalte zwischen den Beispieltagen um, um das Rot zu sehen. Schlafenszeit 22:30.</p>
+<div class="scn" role="group" aria-label="Beispieltag"><button type="button" data-scn="normal">Normaler Tag<small>Double vor 6 h, Single vor 2 h</small></button><button type="button" data-scn="viel">Viel Koffein<small>Double, Monster, Cappu groß</small></button></div>
+<div class="grid">
+ <figure><figcaption><b>A · Uhr</b><span>12-Stunden-Zifferblatt. Der Rand zeigt die nächsten 12 Stunden: braun = Koffein aktiv, rot = über 250 mg, grün = schlaffreundlich. Dazu Markierungen für jetzt, Schlaf und „bereit“.</span></figcaption><div class="scr" id="a"></div></figure>
+ <figure><figcaption><b>B · Messinstrument</b><span>Wie ein Tacho: Skala von 0 bis 400 mg. Grün bis 30 mg, braun bis 250 mg, darüber rot. Der Zeiger steht auf dem aktuellen Wert und zittert im roten Bereich wie im Drehzahlbegrenzer.</span></figcaption><div class="scr" id="b"></div></figure>
+</div>
+<p class="note">Entwürfe mit Beispieldaten. In der App sind es deine echten Einträge.</p>
+</main>
+<script id="engine">
+// Koffein-Modell: 1-Kompartiment, orale Aufnahme (Peak nach ~45 min), Abbau über Halbwertszeit.
+(function () {
+  const KA = 5; // Aufnahmerate pro Stunde
+  const H = 3.6e6;
+  function level(entries, t, hl) {
+    const ke = Math.LN2 / hl;
+    let s = 0;
+    for (const e of entries) {
+      const h = (t - e.t) / H;
+      if (h > 0) s += e.mg * KA / (KA - ke) * (Math.exp(-ke * h) - Math.exp(-KA * h));
+    }
+    return s;
+  }
+  function tmax(hl) { const ke = Math.LN2 / hl; return Math.log(KA / ke) / (KA - ke); }
+  // Erster Zeitpunkt ab `from`, ab dem der Spiegel dauerhaft unter `limit` bleibt.
+  function clearTime(entries, from, hl, limit) {
+    if (!entries.length) return from;
+    const last = Math.max(...entries.map(e => e.t));
+    const start = Math.max(from, last + tmax(hl) * H);
+    for (let t = start; t < start + 72 * H; t += 60000) if (level(entries, t, hl) < limit) return t;
+    return null;
+  }
+  // Spätester Zeitpunkt (ab now) für ein weiteres Getränk, damit zur Schlafenszeit < limit.
+  function latestDrink(entries, mg, now, bed, hl, limit) {
+    for (let t = bed - 15 * 60000; t >= now; t -= 5 * 60000)
+      if (level(entries.concat({ t, mg }), bed, hl) < limit && bed - t >= tmax(hl) * H) return t;
+    return null;
+  }
+  const E = { level, clearTime, latestDrink, tmax };
+  if (typeof module !== 'undefined') module.exports = E; else window.HW = E;
+})();
+</script>
+<script>
+const MIN=6e4,HR=36e5,LIMIT=30,HL=5,q=15*MIN,NOW=Math.floor(Date.now()/MIN)*MIN;
+const Q=Math.floor(NOW/q)*q;let SCN='normal',E,C,footTxt;
+const SC={normal:[{t:Q-6*HR,mg:135},{t:Q-2*HR,mg:68}],viel:[{t:Q-5*HR,mg:135},{t:Q-3*HR,mg:150},{t:Q-75*MIN,mg:140}]};
+const BED=(()=>{const b=new Date(NOW);b.setHours(22,30,0,0);let t=b.getTime();if(t<NOW-4*HR)t+=24*HR;return t})();
+const lv=t=>HW.level(E,t,HL);
+const fmt=t=>new Date(t).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+const day=t=>new Date(t).toDateString();
+const rel=t=>t==null?'–':day(t)===day(NOW)?'heute':'morgen';
+function setup(){E=SC[SCN];C={lvl:lv(NOW),clear:HW.clearTime(E,NOW,HL,LIMIT),out:HW.clearTime(E,NOW,HL,10),atBed:lv(BED)};
+let pk=0,pkT=NOW;for(let t=NOW-12*HR;t<=NOW+2*HR;t+=5*MIN){const v=lv(t);if(v>pk){pk=v;pkT=t}}
+C.peak=pk;C.peakT=pkT;C.ok=C.clear<=BED;
+footerSet()}
+const P=(cx,cy,r,deg)=>[cx+r*Math.sin(deg*Math.PI/180),cy-r*Math.cos(deg*Math.PI/180)];
+const arc=(cx,cy,r,a0,a1)=>{const[x0,y0]=P(cx,cy,r,a0),[x1,y1]=P(cx,cy,r,a1);return `M${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 ${a1-a0>180?1:0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`};
+const ang=t=>{const d=new Date(t);return ((d.getHours()%12)+d.getMinutes()/60)/12*360};
+const RED=250;
+const st=(label,val,sub,cls='')=>`<div class="st ${cls}"><small>${label}</small><b class="tabnum">${val}</b>${sub?`<em>${sub}</em>`:''}</div>`;
+const left=()=>`<div class="side">${st('Bereit ab',fmt(C.clear),rel(C.clear),C.ok?'ok':'no')}${st('Ganz raus',fmt(C.out),rel(C.out))}</div>`;
+const right=()=>`<div class="side r">${st('Höchstwert',Math.round(C.peak)+' mg','um '+fmt(C.peakT),C.peak>=RED?'red':'')}${st('Um '+fmt(BED),Math.round(C.atBed)+' mg',C.ok?'passt':'zu viel',C.ok?'ok':'no')}</div>`;
+const shell=(svg,foot)=>`<div class="top"><span class="brand">Halb<i>wert</i></span><span class="pill">Kurve</span></div><div class="rw">${left()}${svg}${right()}</div><p class="foot">${foot}</p>`;
+const dur=ms=>{const m=Math.round(Math.abs(ms)/MIN),h=Math.floor(m/60);return h?`${h} h ${m%60} min`:`${m} min`};
+function footerSet(){footTxt=C.ok?`Schlaffreundlich <b>${dur(BED-C.clear)}</b> vor dem Schlafen`:`Schlaffreundlich erst <b>${dur(C.clear-BED)}</b> nach deiner Schlafenszeit`}
+function hourMarks(cx,cy,rOut,rIn,rNum,fs){let s='';for(let h=0;h<12;h++){const a=h*30,[x0,y0]=P(cx,cy,rOut,a),[x1,y1]=P(cx,cy,h%3?rOut-4:rIn,a);s+=`<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${h%3?'#3A4C6B':'#8D97AC'}" stroke-width="${h%3?1.2:2}" stroke-linecap="round"/>`;
+ if(h%3===0){const[x,y]=P(cx,cy,rNum,a);s+=`<text x="${x.toFixed(1)}" y="${(y+fs*.36).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="${fs}" fill="#8D97AC">${h||12}</text>`}}return s}
+function marker(cx,cy,r,t,col,label){if(t==null||t<NOW||t>NOW+12*HR)return '';const a=ang(t),[x,y]=P(cx,cy,r,a);return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="${col}" stroke="#101A2C" stroke-width="2"><title>${label}</title></circle>`}
+function nowPointer(cx,cy,r){const a=ang(NOW),[x,y]=P(cx,cy,r,a),[l1,l2]=P(cx,cy,r+9,a-5),[r1,r2]=P(cx,cy,r+9,a+5);return `<path d="M${x.toFixed(1)} ${y.toFixed(1)} L${l1.toFixed(1)} ${l2.toFixed(1)} L${r1.toFixed(1)} ${r2.toFixed(1)}Z" fill="#E6C9A0"/>`}
+function center(cx,cy,big,y0=0,red=false){return `<text x="${cx}" y="${cy+8+y0}" text-anchor="middle" font-family="Instrument Serif,Georgia,serif" font-size="${big}" fill="${red?'#E0574B':'#EFE6DA'}">${Math.round(C.lvl)}</text><text x="${cx}" y="${cy+24+y0}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#8D97AC" letter-spacing=".5">MG JETZT</text>`}
+
+// A: Uhr – Band der nächsten 12 h
+function A(){const cx=100,cy=100,R=82;let band='';const a0=ang(NOW);
+ for(let i=0;i<72;i++){const t=NOW+i*10*MIN,v=lv(t),s=a0+i*5,e=s+5.8;const col=v<LIMIT?'#7FBF8E':v>=RED?'#E0574B':'#B07A4F';const op=v<LIMIT?.55:v>=RED?1:.35+.65*Math.min(v/RED,1);band+=`<path d="${arc(cx,cy,R,s,e)}" stroke="${col}" stroke-opacity="${op.toFixed(2)}" stroke-width="11" fill="none"/>`}
+ const svg=`<svg viewBox="0 0 200 200" role="img" aria-label="Uhr mit Koffeinverlauf der nächsten 12 Stunden">
+ <circle cx="${cx}" cy="${cy}" r="96" fill="#0D1626" stroke="#1B2A44" stroke-width="1.5"/>${band}
+ ${hourMarks(cx,cy,72,64,54,10)}
+ ${marker(cx,cy,R,BED,'#E6C9A0','Schlafenszeit')}${marker(cx,cy,R,C.clear,'#7FBF8E','schlaffreundlich')}
+ ${nowPointer(cx,cy,88)}${center(cx,cy,38,0,C.lvl>=RED)}</svg>`;
+ return shell(svg,footTxt+'<br><span style="font-size:11px">● hell = Schlafenszeit · ● grün = bereit · ▲ = jetzt · rot = über 250 mg</span>')}
+
+// B: Messinstrument 0–400 mg über 270°, rot ab 250
+function B(){const cx=100,cy=104,R=80,MAX=400,a=v=>-135+Math.min(v,MAX)/MAX*270;let ticks='';
+ for(let v=0;v<=MAX;v+=10){const big=v%100===0||v===RED,mid=v%50===0,[x0,y0]=P(cx,cy,R+10,a(v)),[x1,y1]=P(cx,cy,R+(big?1:mid?3:6),a(v));const col=v===RED?'#E0574B':big?'#8D97AC':'#3A4C6B';ticks+=`<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${col}" stroke-width="${big?2:1}"/>`;
+  if(big){const[x,y]=P(cx,cy,R-12,a(v));ticks+=`<text x="${x.toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="${v===RED?'#E0574B':'#8D97AC'}">${v}</text>`}}
+ const L=C.lvl,zone=L<LIMIT?'#7FBF8E':L>=RED?'#E0574B':'#B07A4F',[nx,ny]=P(cx,cy,R-2,a(L)),[bx,by]=P(cx,cy,R+6,a(C.atBed));
+ const fill=L<=LIMIT?`<path d="${arc(cx,cy,R+5,-135,a(L))}" stroke="#7FBF8E" stroke-width="10" fill="none"/>`:
+  `<path d="${arc(cx,cy,R+5,-135,a(LIMIT))}" stroke="#7FBF8E" stroke-width="10" fill="none"/><path d="${arc(cx,cy,R+5,a(LIMIT),a(Math.min(L,RED)))}" stroke="#B07A4F" stroke-width="10" fill="none"/>`+(L>RED?`<path d="${arc(cx,cy,R+5,a(RED),a(L))}" stroke="#E0574B" stroke-width="10" fill="none"/>`:'');
+ const svg=`<svg viewBox="0 0 200 190" role="img" aria-label="Messinstrument, ${Math.round(L)} mg">
+ <path d="${arc(cx,cy,R+5,-135,a(LIMIT))}" stroke="#7FBF8E" stroke-opacity=".22" stroke-width="10" fill="none"/>
+ <path d="${arc(cx,cy,R+5,a(LIMIT),a(RED))}" stroke="#1B2A44" stroke-width="10" fill="none"/>
+ <path d="${arc(cx,cy,R+5,a(RED),135)}" stroke="#E0574B" stroke-opacity=".25" stroke-width="10" fill="none"/>
+ ${fill}${ticks}
+ <g class="needle${L>=RED?' limit':''}" style="transform-origin:${cx}px ${cy}px"><line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="${L>=RED?'#E0574B':'#E6C9A0'}" stroke-width="3" stroke-linecap="round"/></g>
+ <circle cx="${cx}" cy="${cy}" r="6" fill="${L>=RED?'#E0574B':'#E6C9A0'}"/><circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="4" fill="none" stroke="#E6C9A0" stroke-width="1.6"><title>Wert zur Schlafenszeit</title></circle>
+ <text x="${cx}" y="${cy+46}" text-anchor="middle" font-family="Instrument Serif,Georgia,serif" font-size="34" fill="${L>=RED?'#E0574B':'#EFE6DA'}">${Math.round(L)}</text>
+ <text x="${cx}" y="${cy+60}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#8D97AC" letter-spacing=".5">MG JETZT</text>
+ <text x="${P(cx,cy,R+18,-135)[0].toFixed(1)}" y="${(P(cx,cy,R+18,-135)[1]+12).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#7FBF8E">SCHLAF</text>
+ <text x="${P(cx,cy,R+18,135)[0].toFixed(1)}" y="${(P(cx,cy,R+18,135)[1]+12).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#E0574B">ZU VIEL</text></svg>`;
+ return shell(svg,footTxt+'<br><span style="font-size:11px">grün = schlaffreundlich · rot = über 250 mg · ○ = Wert zur Schlafenszeit</span>')}
+
+function draw(){setup();document.getElementById('a').innerHTML=A();document.getElementById('b').innerHTML=B();document.querySelectorAll('[data-scn]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.scn===SCN))}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-scn]');if(b){SCN=b.dataset.scn;draw()}});draw();
+</script>
