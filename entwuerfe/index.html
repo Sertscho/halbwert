@@ -1,0 +1,252 @@
+<title>Halbwert Entwürfe</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Young+Serif&display=swap">
+<style>
+/* Layout: ein Handy-Rahmen mittig, Einstellungen oben. Bewusst nur dunkel. */
+:root{
+  color-scheme:dark;
+  --page:#070C17; --ink:#E8DDCF; --muted:#8C93A6; --line:#1E2A42; --crema:#D9A46A;
+  --good:#7FBF8E; --warn:#E39A5C;
+  --f-ui:"IBM Plex Sans",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+header.top{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:end;justify-content:space-between}
+header.top h1{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:clamp(28px,5vw,40px);margin:0;letter-spacing:-.02em;text-wrap:balance}
+header.top p{margin:4px 0 0;color:var(--muted);max-width:60ch}
+.ctrl{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.ctrl label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.ctrl input,.ctrl select,.ctrl button{font:inherit;font-size:15px;color:var(--ink);background:#101A2E;border:1px solid var(--line);border-radius:10px;padding:8px 10px;text-transform:none;letter-spacing:0}
+.ctrl button{cursor:pointer}
+.ctrl button:hover{border-color:var(--crema)}
+:focus-visible{outline:2px solid var(--crema);outline-offset:2px}
+.note{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;justify-items:center}
+figure{margin:0;display:flex;flex-direction:column;gap:10px;width:100%;max-width:360px}
+figcaption{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+figcaption b{font-size:17px}
+figcaption span{font-size:13px;color:var(--muted)}
+.phone{width:100%;height:740px;border-radius:42px;border:1px solid #26324D;overflow:hidden;position:relative;box-shadow:0 30px 60px -30px #000}
+.screen{height:100%;overflow-y:auto;padding:22px 20px 24px;display:flex;flex-direction:column;gap:18px}
+.ex{font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;align-self:flex-start}
+button{font:inherit;color:inherit}
+.tabnum{font-variant-numeric:tabular-nums}
+
+/* ---------- Entwurf 2: Röstkurve ---------- */
+.d2{--bg:#101A2C;--grid:#22304A;--tx:#EFE6DA;--mu:#8D97AC;--mo:#B07A4F;--ac:#E6C9A0;background:var(--bg);color:var(--tx);font-family:var(--f-ui)}
+.d2 .brand{font-family:"Instrument Serif",serif;font-size:30px;line-height:1}
+.d2 .brand i{color:var(--ac)}
+.d2 .ex{background:#1B2A44;color:var(--ac)}
+.d2 .now{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.d2 .now .mg{font-family:"Instrument Serif",serif;font-size:56px;line-height:1}
+.d2 .now .mg small{font-family:var(--f-ui);font-size:15px;color:var(--mu)}
+.d2 .now .r{text-align:right;font-size:13px;color:var(--mu)}
+.d2 .now .r b{display:block;font-size:17px;color:var(--tx)}
+.d2 svg.chart{width:100%;height:auto;display:block}
+.d2 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.d2 .chips button{flex:none;background:transparent;border:1px solid #33435F;border-radius:99px;padding:8px 14px;cursor:pointer;font-size:13px;white-space:nowrap}
+.d2 .chips button:hover{border-color:var(--ac);color:var(--ac)}
+.d2 .chips button span{color:var(--mo);margin-left:6px}
+.d2 .tip{background:#172338;border-radius:14px;padding:12px 14px;font-size:14px}
+.d2 .tip b{color:var(--ac);font-weight:600}
+.d2 h3{margin:0;font-family:"Instrument Serif",serif;font-style:italic;font-weight:400;font-size:20px}
+
+.d2 .top2{display:flex;justify-content:space-between;align-items:center}
+.d2 .toggle{display:flex;align-items:center;gap:6px;background:#1B2A44;border:1px solid #3A4C6B;border-radius:99px;padding:5px 10px 5px 8px;cursor:pointer;font-size:12px;color:var(--ac)}
+.d2 .toggle:hover{border-color:var(--ac)}
+.d2 .toggle svg{width:16px;height:16px}
+.d2 .ring{position:relative;width:220px;max-width:100%;height:220px;margin:0 auto}
+.d2 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.d2 .ring .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.d2 .ring .mg{font-family:"Instrument Serif",serif;font-size:64px;line-height:1}
+.d2 .ring .u{color:var(--mu);font-size:13px}
+.d2 .status{text-align:center;font-size:15px}
+.d2 .status b{color:var(--ac);font-weight:600}
+.d2 .drinks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.d2 .drinks button{background:#172338;border:1px solid #24344F;border-radius:16px;padding:10px;text-align:left;cursor:pointer;display:flex;align-items:center;gap:10px}
+.d2 .drinks .tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.d2 .ic{flex:none;display:inline-flex}.d2 .ic svg{width:32px;height:32px}
+.log .ic svg{width:20px;height:20px;vertical-align:-5px;margin-right:6px}
+.d2 .drinks button:hover{border-color:var(--ac)}
+.d2 .drinks b{font-size:14px;font-weight:600}
+.d2 .drinks .mgv{font-family:var(--f-mono);font-size:12px;color:var(--mo)}
+@media (prefers-reduced-motion:no-preference){.d2 .view{animation:fade .25s ease}@keyframes fade{from{opacity:.3}}}
+
+/* gemeinsames Tagesprotokoll */
+.log{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.log li{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px}
+.log li .tm{font-family:var(--f-mono);opacity:.85;margin-right:8px}
+.log li button{background:none;border:0;cursor:pointer;font-size:13px;padding:2px 6px;opacity:.75}
+.log li button:hover{opacity:1}
+.empty{font-size:14px;opacity:.8}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Halbwert</h1>
+      <p>Tippe auf ein Getränk, es wird mit der aktuellen Uhrzeit eingetragen. Oben rechts in der App wechselst du zwischen Kurve und Ring.</p>
+    </div>
+    <div class="ctrl">
+      <label for="bed">Schlafenszeit<input id="bed" type="time" value="22:30"></label>
+      <label for="hl">Abbau
+        <select id="hl">
+          <option value="3">schnell (Raucher, ~3 h)</option>
+          <option value="5" selected>normal (~5 h)</option>
+          <option value="8">langsam (Pille, ~8 h)</option>
+        </select>
+      </label>
+      <button id="reset" type="button">Beispieltag laden</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <figure><figcaption><b>Röstkurve + Espressonacht</b><span>Mix</span></figcaption><div class="phone d2"><div class="screen" id="s2"></div></div></figure>
+  </div>
+
+  <p class="note">Richtwerte, keine medizinische Beratung. Schlaffreundlich heißt unter 30 mg Restkoffein (abgeleitet aus Gardiner et al. 2023: ~107 mg Kaffee mindestens 8,8 h vor dem Schlafen). Ninja- und McCafé-Werte sind Schätzungen, Red Bull und Monster sind Herstellerangaben.</p>
+</div>
+
+<script id="engine">
+// Koffein-Modell: 1-Kompartiment, orale Aufnahme (Peak nach ~45 min), Abbau über Halbwertszeit.
+(function () {
+  const KA = 5; // Aufnahmerate pro Stunde
+  const H = 3.6e6;
+  function level(entries, t, hl) {
+    const ke = Math.LN2 / hl;
+    let s = 0;
+    for (const e of entries) {
+      const h = (t - e.t) / H;
+      if (h > 0) s += e.mg * KA / (KA - ke) * (Math.exp(-ke * h) - Math.exp(-KA * h));
+    }
+    return s;
+  }
+  function tmax(hl) { const ke = Math.LN2 / hl; return Math.log(KA / ke) / (KA - ke); }
+  // Erster Zeitpunkt ab `from`, ab dem der Spiegel dauerhaft unter `limit` bleibt.
+  function clearTime(entries, from, hl, limit) {
+    if (!entries.length) return from;
+    const last = Math.max(...entries.map(e => e.t));
+    const start = Math.max(from, last + tmax(hl) * H);
+    for (let t = start; t < start + 72 * H; t += 60000) if (level(entries, t, hl) < limit) return t;
+    return null;
+  }
+  // Spätester Zeitpunkt (ab now) für ein weiteres Getränk, damit zur Schlafenszeit < limit.
+  function latestDrink(entries, mg, now, bed, hl, limit) {
+    for (let t = bed - 15 * 60000; t >= now; t -= 5 * 60000)
+      if (level(entries.concat({ t, mg }), bed, hl) < limit) {
+        // Kurz vor Schlafenszeit ist der Spiegel noch in der Aufnahmephase und täuscht -> nur echte Abklingzeiten zählen
+        if (bed - t >= tmax(hl) * H) return t;
+      }
+    return null;
+  }
+  const E = { level, clearTime, latestDrink, tmax };
+  if (typeof module !== 'undefined') module.exports = E; else window.HW = E;
+})();
+</script>
+<script>
+const DRINKS=[
+  {id:'n1',name:'Ninja Single',sub:'9 g Pulver',mg:70},
+  {id:'n2',name:'Ninja Double',sub:'18 g Pulver',mg:135},
+  {id:'mk',name:'McCafé Cappuccino klein',short:'Cappu klein',sub:'1 Shot',mg:70},
+  {id:'mg',name:'McCafé Cappuccino groß',short:'Cappu groß',sub:'2 Shots',mg:140},
+  {id:'rb',name:'Red Bull Sugarfree',short:'Red Bull SF',sub:'250 ml · 1000 mg Taurin',mg:80},
+  {id:'mo',name:'Monster Ultra White',short:'Monster White',sub:'500 ml · ~2000 mg Taurin',mg:150},
+];
+const KEY='halbwert-entwurf-v1', MIN=60000, HR=3.6e6, LIMIT=30;
+const byId=id=>DRINKS.find(d=>d.id===id);
+const cup=(w,steam)=>`<path d="M${16-w} 14h${2*w}v4a${w} ${w} 0 0 1-${2*w} 0z" fill="#B07A4F"/><path d="M${16-w} 14h${2*w}" stroke="#E6C9A0" stroke-width="1.6"/><path d="M${16+w} 15.5h1.5a2.3 2.3 0 0 1 0 4.6h-2" fill="none" stroke="#E6C9A0" stroke-width="1.6"/><path d="M7 26.5h18" stroke="#E6C9A0" stroke-width="1.6" stroke-linecap="round"/>`+steam.map(x=>`<path d="M${x} 6c-1.2 1.6 1.2 2.6 0 4.4" fill="none" stroke="#8D97AC" stroke-width="1.4" stroke-linecap="round"/>`).join('');
+const paper=(top,bot,y)=>`<path d="M${16-top} ${y+2}h${2*top}l-1.3 ${27-y-2}h-${2*top-2.6}z" fill="#EFE6DA"/><path d="M${16-top+.6} ${y+8}h${2*top-1.2}l-.4 5h-${2*top-2}z" fill="#B07A4F"/><rect x="${16-top-1}" y="${y}" width="${2*top+2}" height="2.4" rx="1" fill="#E6C9A0"/>`;
+const can=(w,y,body,band)=>`<rect x="${16-w}" y="${y}" width="${2*w}" height="${28-y}" rx="2" fill="${body}"/><rect x="${16-w+1.2}" y="${y-1.2}" width="${2*w-2.4}" height="1.6" rx=".8" fill="#8D97AC"/><rect x="${16-w}" y="${y+6}" width="${2*w}" height="${(28-y)/3}" fill="${band}"/>`;
+const svg=b=>`<svg viewBox="0 0 32 32" aria-hidden="true">${b}</svg>`;
+const PIC={n1:svg(cup(5,[16])),n2:svg(cup(6.5,[13.5,18.5])),mk:svg(paper(5,0,10)),mg:svg(paper(6.5,0,5)),rb:svg(can(4,6,'#9FB0C8','#2F4A7A')),mo:svg(can(5.5,4,'#EDE6DC','#C9BFB2'))};
+
+function example(){const q=15*MIN,n=Math.floor(Date.now()/q)*q;return [{id:'n2',t:n-6*HR},{id:'mg',t:n-2*HR}].map(e=>({...e,mg:byId(e.id).mg}))}
+let S={entries:example(),example:true,bed:'22:30',hl:5,view:'curve'};
+try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&Array.isArray(j.entries))S=j}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+const fmt=t=>new Date(t).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+const day=t=>new Date(t).toDateString();
+const fmtD=t=>t==null?'–':(day(t)===day(Date.now())?'':'morgen ')+fmt(t);
+const dur=ms=>{const m=Math.round(Math.abs(ms)/MIN),h=Math.floor(m/60);return h?`${h} h ${m%60} min`:`${m} min`};
+function bedTime(now){const[h,m]=S.bed.split(':').map(Number);const b=new Date(now);b.setHours(h,m,0,0);let t=b.getTime();if(t<now-4*HR)t+=24*HR;return t}
+
+function compute(){
+  const now=Date.now(),hl=+S.hl,E=S.entries;
+  const bed=bedTime(now),lvl=HW.level(E,now,hl);
+  const clear=HW.clearTime(E,now,hl,LIMIT),out=HW.clearTime(E,now,hl,10);
+  const latest=HW.latestDrink(E,70,now,bed,hl,LIMIT);
+  const ok=clear!=null&&clear<=bed;
+  return {now,hl,E,bed,lvl,clear,out,latest,ok,atBed:HW.level(E,bed,hl)};
+}
+const exTag=()=>S.example?'<span class="ex">Beispieltag</span>':'';
+const logHtml=E=>E.length?`<ul class="log">${E.slice().sort((a,b)=>a.t-b.t).map(e=>`<li><span><span class="tm">${fmt(e.t)}</span><span class="ic">${PIC[e.id]}</span>${byId(e.id).name}</span><span class="tabnum">${e.mg} mg <button type="button" data-del="${e.t}" aria-label="${byId(e.id).name} löschen">✕</button></span></li>`).join('')}</ul>`:'<p class="empty">Heute noch nichts eingetragen.</p>';
+const statusTxt=c=>c.ok?`passt, ${dur(c.bed-c.clear)} vor dem Schlafen`:`${dur(c.clear-c.bed)} nach deiner Schlafenszeit`;
+const latestTxt=c=>c.latest?`Noch ein Single-Espresso geht bis <b>${fmt(c.latest)}</b>.`:`Heute lieber kein Koffein mehr, sonst wird es zur Schlafenszeit zu viel.`;
+
+function ring(c){
+  const peak=Math.max(200,c.lvl),f=Math.min(c.lvl/peak,1),R=94,L=2*Math.PI*R;
+  return `<div class="ring"><svg viewBox="0 0 220 220" aria-hidden="true"><circle cx="110" cy="110" r="${R}" fill="none" stroke="#1B2A44" stroke-width="14"/><circle cx="110" cy="110" r="${R}" fill="none" stroke="url(#g1)" stroke-width="14" stroke-linecap="round" stroke-dasharray="${f*L} ${L}"/><defs><linearGradient id="g1"><stop offset="0" stop-color="#7A4A2A"/><stop offset="1" stop-color="#E6C9A0"/></linearGradient></defs></svg>
+  <div class="c"><span class="mg tabnum">${Math.round(c.lvl)}</span><span class="u">mg Koffein im Körper</span></div></div>
+  <div class="status">Schlaffreundlich ab <b>${fmtD(c.clear)}</b><br><span style="color:var(--mu);font-size:13px">Praktisch raus ab ${fmtD(c.out)}</span></div>`;
+}
+
+function chart(c){
+  const W=320,Hh=190,pl=30,pr=8,pt=12,pb=24;
+  const first=c.E.length?Math.min(...c.E.map(e=>e.t)):c.now;
+  const t0=Math.floor(Math.min(first-HR,c.now-3*HR)/HR)*HR;
+  const t1=Math.ceil((Math.max(c.bed,c.clear||c.bed)+HR)/HR)*HR;
+  let pts=[],mx=0;for(let t=t0;t<=t1;t+=10*MIN){const v=HW.level(c.E,t,c.hl);pts.push([t,v]);mx=Math.max(mx,v)}
+  const ym=Math.max(60,Math.ceil(mx*1.15/50)*50);
+  const X=t=>pl+(t-t0)/(t1-t0)*(W-pl-pr),Y=v=>pt+(1-v/ym)*(Hh-pt-pb);
+  const line=pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join(' ');
+  const past=pts.filter(p=>p[0]<=c.now);
+  const area=past.length>1?`M${X(t0)} ${Y(0)} `+past.map(p=>'L'+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join(' ')+` L${X(past[past.length-1][0]).toFixed(1)} ${Y(0)} Z`:'';
+  const step=(t1-t0)>14*HR?4*HR:3*HR;let ticks='';
+  for(let t=Math.ceil(t0/step)*step;t<=t1;t+=step)ticks+=`<text x="${X(t)}" y="${Hh-6}" text-anchor="middle" fill="#8D97AC" font-size="10">${new Date(t).getHours()} Uhr</text><line x1="${X(t)}" x2="${X(t)}" y1="${pt}" y2="${Hh-pb}" stroke="#22304A"/>`;
+  return `<svg class="chart" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Koffeinkurve heute">
+   ${ticks}
+   <text x="${pl-4}" y="${Y(ym)+4}" text-anchor="end" fill="#8D97AC" font-size="10">${ym}</text>
+   <text x="${pl-4}" y="${Y(0)+4}" text-anchor="end" fill="#8D97AC" font-size="10">0</text>
+   <line x1="${pl}" x2="${W-pr}" y1="${Y(LIMIT)}" y2="${Y(LIMIT)}" stroke="#7FBF8E" stroke-dasharray="3 4" opacity=".7"/>
+   <text x="${pl+4}" y="${Y(LIMIT)-4}" fill="#7FBF8E" font-size="10">Schlafgrenze 30 mg</text>
+   <line x1="${X(c.bed)}" x2="${X(c.bed)}" y1="${pt}" y2="${Hh-pb}" stroke="#E6C9A0" stroke-dasharray="2 3"/>
+   <text x="${X(c.bed)-4}" y="${pt+10}" text-anchor="end" fill="#E6C9A0" font-size="10">Schlaf ${fmt(c.bed)}</text>
+   ${area?`<path d="${area}" fill="#B07A4F" opacity=".28"/>`:''}
+   <path d="${line}" fill="none" stroke="#B07A4F" stroke-width="2.5" stroke-linejoin="round"/>
+   <circle cx="${X(c.now)}" cy="${Y(c.lvl)}" r="5" fill="#E6C9A0" stroke="#101A2C" stroke-width="2"/>
+  </svg>`;
+}
+const ICON={ring:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/></svg>',
+  curve:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 14 L4 5 L6 8 L8 3 L15 13"/></svg>'};
+function r2(c){
+  const other=S.view==='ring'?'curve':'ring';
+  const view=S.view==='ring'?ring(c):`<div class="now"><div class="mg tabnum">${Math.round(c.lvl)}<small> mg jetzt</small></div><div class="r">schlaffreundlich ab<b>${fmtD(c.clear)}</b></div></div>${chart(c)}`;
+  return `<div class="top2"><div class="brand">Halb<i>wert</i></div><button type="button" class="toggle" data-view="${other}" aria-label="Ansicht wechseln zu ${other==='ring'?'Ring':'Kurve'}">${ICON[other]}${other==='ring'?'Ring':'Kurve'}</button></div>${exTag()}
+  <div class="view">${view}</div>
+  <div class="tip">${latestTxt(c)} Zur Schlafenszeit sind es ${Math.round(c.atBed)} mg, ${statusTxt(c)}.</div>
+  <h3>Getränk eintragen</h3>
+  <div class="drinks">${DRINKS.map(d=>`<button type="button" data-add="${d.id}"><span class="ic">${PIC[d.id]}</span><span class="tx"><b>${d.short||d.name}</b><span class="mgv">${d.mg} mg</span></span></button>`).join('')}</div>
+  <h3>Heute</h3>${logHtml(c.E)}`;
+}
+
+function render(){
+  S.entries=S.entries.filter(e=>e.t>Date.now()-48*HR);
+  const c=compute();
+  document.getElementById('s2').innerHTML=r2(c);
+  document.getElementById('bed').value=S.bed;document.getElementById('hl').value=String(S.hl);
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-add]'),d=e.target.closest('[data-del]'),v=e.target.closest('[data-view]');
+  if(v){S.view=v.dataset.view;save();render();document.querySelector('#s2 .toggle').focus()}
+  if(a){if(S.example){S.entries=[];S.example=false}const dr=byId(a.dataset.add);S.entries.push({id:dr.id,t:Date.now(),mg:dr.mg});save();render()}
+  if(d){S.entries=S.entries.filter(x=>x.t!==+d.dataset.del);S.example=false;save();render()}
+});
+document.getElementById('reset').onclick=()=>{S.entries=example();S.example=true;save();render()};
+document.getElementById('bed').onchange=e=>{if(e.target.value){S.bed=e.target.value;save();render()}};
+document.getElementById('hl').onchange=e=>{S.hl=+e.target.value;save();render()};
+render();setInterval(render,60000);
+</script>
