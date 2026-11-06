@@ -230,6 +230,9 @@ const P=(cx,cy,r,deg)=>[cx+r*Math.sin(deg*Math.PI/180),cy-r*Math.cos(deg*Math.PI
 const arc=(cx,cy,r,a0,a1)=>{const[x0,y0]=P(cx,cy,r,a0),[x1,y1]=P(cx,cy,r,a1);return `M${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 ${a1-a0>180?1:0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`};
 const rel=t=>t==null?'':day(t)===day(Date.now())?'heute':'morgen';
 const st=(label,val,sub,cls='')=>`<div class="st ${cls}"><small>${label}</small><b class="tabnum">${val}</b>${sub?`<em>${sub}</em>`:''}</div>`;
+// Zeiger: unten 8 breit, Spitze 2 breit, kleines Gegengewicht hinter der Nabe
+const needlePath=(cx,cy,len,deg)=>{const p=(r,d)=>P(cx,cy,r,deg+d).map(v=>v.toFixed(1)).join(' '),w=(r,half)=>Math.atan2(half,Math.max(r,1))*180/Math.PI;
+  return `M${p(len,-w(len,1))} L${p(len,w(len,1))} L${p(10,w(10,4))} L${p(-14,-w(14,3))} L${p(-14,w(14,3))} L${p(10,-w(10,4))} Z`};
 function ring(c){
   let pk=0,pkT=c.now;for(let t=c.now-12*HR;t<=c.now+HR;t+=5*MIN){const v=HW.level(c.E,t,c.hl);if(v>pk){pk=v;pkT=t}}
   const cx=100,cy=104,R=80,L=c.lvl,a=v=>-135+Math.min(v,GMAX)/GMAX*270;let ticks='';
@@ -237,17 +240,17 @@ function ring(c){
     ticks+=`<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${col}" stroke-width="${big?2:1}"/>`;
     if(big){const[x,y]=P(cx,cy,R-12,a(v));ticks+=`<text x="${x.toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="${v===RED?'#E0574B':'#8D97AC'}">${v}</text>`}}
   const red=L>=RED,[nx,ny]=P(cx,cy,R-2,a(L)),[bx,by]=P(cx,cy,R+6,a(c.atBed)),needle=red?'#E0574B':'#E6C9A0';
-  let fill=`<path d="${arc(cx,cy,R+5,-135,a(Math.min(L,LIMIT)))}" stroke="#7FBF8E" stroke-width="10" fill="none"/>`;
-  if(L>LIMIT)fill+=`<path d="${arc(cx,cy,R+5,a(LIMIT),a(Math.min(L,RED)))}" stroke="#B07A4F" stroke-width="10" fill="none"/>`;
-  if(L>RED)fill+=`<path d="${arc(cx,cy,R+5,a(RED),a(L))}" stroke="#E0574B" stroke-width="10" fill="none"/>`;
+  let fill=`<path d="${arc(cx,cy,R+5,-135,a(Math.min(L,LIMIT)))}" stroke="#7FBF8E" stroke-width="17" fill="none"/>`;
+  if(L>LIMIT)fill+=`<path d="${arc(cx,cy,R+5,a(LIMIT),a(Math.min(L,RED)))}" stroke="#B07A4F" stroke-width="17" fill="none"/>`;
+  if(L>RED)fill+=`<path d="${arc(cx,cy,R+5,a(RED),a(L))}" stroke="#E0574B" stroke-width="17" fill="none"/>`;
   const lab=(deg,txt,col)=>{const[x,y]=P(cx,cy,R+18,deg);return `<text x="${x.toFixed(1)}" y="${(y+12).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="${col}">${txt}</text>`};
   const svg=`<svg viewBox="0 0 200 190" role="img" aria-label="Messinstrument, ${Math.round(L)} mg Koffein">
-   <path d="${arc(cx,cy,R+5,-135,a(LIMIT))}" stroke="#7FBF8E" stroke-opacity=".22" stroke-width="10" fill="none"/>
-   <path d="${arc(cx,cy,R+5,a(LIMIT),a(RED))}" stroke="#1B2A44" stroke-width="10" fill="none"/>
-   <path d="${arc(cx,cy,R+5,a(RED),135)}" stroke="#E0574B" stroke-opacity=".25" stroke-width="10" fill="none"/>
+   <path d="${arc(cx,cy,R+5,-135,a(LIMIT))}" stroke="#7FBF8E" stroke-opacity=".22" stroke-width="17" fill="none"/>
+   <path d="${arc(cx,cy,R+5,a(LIMIT),a(RED))}" stroke="#1B2A44" stroke-width="17" fill="none"/>
+   <path d="${arc(cx,cy,R+5,a(RED),135)}" stroke="#E0574B" stroke-opacity=".25" stroke-width="17" fill="none"/>
    ${L>0.5?fill:''}${ticks}
-   <line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="${needle}" stroke-width="3" stroke-linecap="round"/>
-   <circle cx="${cx}" cy="${cy}" r="6" fill="${needle}"/>
+   <path d="${needlePath(cx,cy,R-2,a(L))}" fill="${needle}" stroke="${needle}" stroke-width="1.5" stroke-linejoin="round"/>
+   <circle cx="${cx}" cy="${cy}" r="9" fill="${needle}"/><circle cx="${cx}" cy="${cy}" r="3.5" fill="#101A2C"/>
    ${c.E.length?`<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="4" fill="none" stroke="#E6C9A0" stroke-width="1.6"><title>Wert zur Schlafenszeit</title></circle>`:''}
    <text x="${cx}" y="${cy+46}" text-anchor="middle" font-family="Instrument Serif,Georgia,serif" font-size="34" fill="${red?'#E0574B':'#EFE6DA'}">${Math.round(L)}</text>
    <text x="${cx}" y="${cy+60}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#8D97AC" letter-spacing=".5">MG JETZT</text>
