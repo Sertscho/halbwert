@@ -59,6 +59,9 @@ svg.chart{width:100%;height:auto;display:block}
 .st em{display:block;font-style:normal;font-size:11px;color:var(--mu);min-height:1em}
 .st.ok b{color:var(--good)} .st.no b{color:var(--warn)} .st.red b{color:var(--red)}
 .legend{margin:4px 0 0;text-align:center;font-size:11px;color:var(--mu)}
+svg.bat{width:100%;height:auto;display:block;overflow:visible;margin-top:10px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;border-top:1px solid var(--edge);padding-top:12px;margin-top:10px}
+.stats .st b{font-size:clamp(17px,5vw,21px)}
 
 .tip{background:var(--card);border-radius:14px;padding:12px 14px;font-size:14px}
 .tip b{color:var(--ac);font-weight:600}
@@ -183,7 +186,8 @@ const can=(w,y,body,band)=>`<rect x="${16-w}" y="${y}" width="${2*w}" height="${
 const svg=b=>`<svg viewBox="0 0 32 32" aria-hidden="true">${b}</svg>`;
 const PIC={n1:svg(cup(5,[16])),n2:svg(cup(6.5,[13.5,18.5])),mk:svg(paper(5,10)),mg:svg(paper(6.5,5)),rb:svg(can(4,6,'#9FB0C8','#2F4A7A')),mo:svg(can(5.5,4,'#EDE6DC','#C9BFB2')),cz:svg(can(4.5,6,'#1E1E22','#B8322B')),
   st:svg(cup(5.5,[]).replace('#B07A4F','#8E4E24')+'<path d="M19.5 14.5V8.5" stroke="#E6C9A0" stroke-width="1"/><rect x="18" y="5" width="4" height="4" rx=".6" fill="#E6C9A0"/>')};
-const ICON={ring:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2.5 12.5a6.5 6.5 0 1 1 11 0"/><path d="M8 10l3-4"/></svg>',
+const ICON={bat:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="1" y="4" width="12" height="8" rx="2"/><path d="M15 7v2"/><path d="M4 7v2" stroke-linecap="round"/></svg>',
+  ring:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2.5 12.5a6.5 6.5 0 1 1 11 0"/><path d="M8 10l3-4"/></svg>',
   curve:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 14 L4 5 L6 8 L8 3 L15 13"/></svg>',
   gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2.2" fill="#1B2A44"/><circle cx="15" cy="12" r="2.2" fill="#1B2A44"/><circle cx="7" cy="18" r="2.2" fill="#1B2A44"/></svg>'};
 
@@ -246,8 +250,9 @@ const st=(label,val,sub,cls='')=>`<div class="st ${cls}"><small>${label}</small>
 // Zeiger: unten 8 breit, Spitze 2 breit, kleines Gegengewicht hinter der Nabe
 const needlePath=(cx,cy,len,deg)=>{const p=(r,d)=>P(cx,cy,r,deg+d).map(v=>v.toFixed(1)).join(' '),w=(r,half)=>Math.atan2(half,Math.max(r,1))*180/Math.PI;
   return `M${p(len,-w(len,1))} L${p(len,w(len,1))} L${p(10,w(10,4))} L${p(-14,-w(14,3))} L${p(-14,w(14,3))} L${p(10,-w(10,4))} Z`};
+const peak=c=>{let pk=0,pkT=c.now;for(let t=c.now-12*HR;t<=c.now+3*HR;t+=5*MIN){const v=HW.level(c.E,t,c.hl);if(v>pk){pk=v;pkT=t}}return[pk,pkT]};
 function ring(c){
-  let pk=0,pkT=c.now;for(let t=c.now-12*HR;t<=c.now+3*HR;t+=5*MIN){const v=HW.level(c.E,t,c.hl);if(v>pk){pk=v;pkT=t}}
+  const[pk,pkT]=peak(c);
   const cx=100,cy=104,R=68,L=c.lvl,a=v=>-135+Math.min(v,GMAX)/GMAX*270;let ticks='';
   for(let v=0;v<=GMAX;v+=10){const big=v%100===0,mid=v%50===0,[x0,y0]=P(cx,cy,R+13,a(v)),[x1,y1]=P(cx,cy,R+(big?20:mid?18:16),a(v));const col=v===RED?'#E0574B':big?'#8D97AC':'#3A4C6B';
     ticks+=`<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${col}" stroke-width="${big?2:1}"/>`;
@@ -275,21 +280,42 @@ function ring(c){
    <div class="side r">${st('Höchstwert',Math.round(pk)+' mg',pk>0.5?'um '+fmt(pkT):'',pk>=RED?'red':'')}${st('Um '+fmt(c.bed),Math.round(c.atBed)+' mg',c.E.length?(c.ok?'passt':'zu viel'):'',c.E.length?okc:'')}</div></div>
    <p class="legend">grün = schlaffreundlich · rot = über ${RED} mg · ○ = Wert zur Schlafenszeit</p>`;
 }
+// Akku-Ansicht: liegende Batterie 0–400 mg, grün bis 30, rot ab 300
+function bat(c){
+  const[pk,pkT]=peak(c),L=c.lvl,BX=4,BY=10,BW=282,BH=84,IX=BX+7,IY=BY+7,IW=BW-14,IH=BH-14,xv=v=>IX+Math.min(v,GMAX)/GMAX*IW;
+  const seg=(a,b,col)=>b>a?`<rect x="${xv(a).toFixed(1)}" y="${IY}" width="${(xv(b)-xv(a)).toFixed(1)}" height="${IH}" fill="${col}"/>`:'';
+  const fill=L>0.5?seg(0,Math.min(L,LIMIT),'#7FBF8E')+seg(LIMIT,Math.min(L,RED),'#B07A4F')+seg(RED,L,'#E0574B'):'';
+  let ticks='';for(let v=0;v<=GMAX;v+=50){const big=v%100===0,x=xv(v),col=v===RED?'#E0574B':big?'#8D97AC':'#3A4C6B';
+    ticks+=`<line x1="${x}" x2="${x}" y1="${BY+BH+5}" y2="${BY+BH+(big?11:8)}" stroke="${col}" stroke-width="${big?1.6:1}"/>`+(big?`<text x="${x}" y="${BY+BH+22}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="${v===RED?'#E0574B':'#8D97AC'}">${v}</text>`:'')}
+  const rising=pk>L+3&&pkT>c.now;
+  const ghost=rising?`<rect x="${xv(L).toFixed(1)}" y="${IY+1}" width="${(xv(pk)-xv(L)).toFixed(1)}" height="${IH-2}" fill="none" stroke="#E6C9A0" stroke-opacity=".6" stroke-width="1.2" stroke-dasharray="4 3"><title>So weit steigt der Wert noch</title></rect>`:'';
+  const bx=xv(c.atBed),bed=c.E.length?`<path d="M${bx.toFixed(1)} ${BY+BH+2} l-5 8 h10z" fill="#E6C9A0"><title>Wert zur Schlafenszeit</title></path>`:'';
+  const svg=`<svg class="bat" viewBox="0 0 300 130" role="img" aria-label="Akku, ${Math.round(L)} von ${GMAX} mg Koffein">
+   <rect x="${BX}" y="${BY}" width="${BW}" height="${BH}" rx="16" fill="#0D1626" stroke="#3A4C6B" stroke-width="2.5"/><rect x="${BX+BW+3}" y="${BY+BH/2-15}" width="10" height="30" rx="4" fill="#3A4C6B"/>
+   <clipPath id="batclip"><rect x="${IX}" y="${IY}" width="${IW}" height="${IH}" rx="10"/></clipPath>
+   <g clip-path="url(#batclip)"><rect x="${IX}" y="${IY}" width="${xv(LIMIT)-IX}" height="${IH}" fill="#7FBF8E" opacity=".14"/><rect x="${xv(RED)}" y="${IY}" width="${xv(GMAX)-xv(RED)}" height="${IH}" fill="#E0574B" opacity=".14"/>${fill}</g>
+   ${ghost}<line x1="${xv(RED)}" x2="${xv(RED)}" y1="${IY}" y2="${IY+IH}" stroke="#E0574B" stroke-opacity=".5" stroke-dasharray="2 3"/>${ticks}${bed}</svg>`;
+  const okc=c.E.length?(c.ok?'ok':'no'):'',later=t=>t>Date.now()+MIN?rel(t):'';
+  return `<div class="now"><div class="mg tabnum"${L>=RED?' style="color:var(--red)"':''}>${Math.round(L)}<small> mg jetzt</small></div><div class="r">schlaffreundlich ab<b>${fmtD(c.clear)}</b></div></div>${svg}
+   <div class="stats">${st('Bereit ab',fmtD(c.clear).replace('morgen ',''),later(c.clear),okc||'ok')}${st('Ganz raus',fmtD(c.out).replace('morgen ',''),later(c.out))}${st('Höchstwert',Math.round(pk)+' mg',pk>0.5?'um '+fmt(pkT):'',pk>=RED?'red':'')}${st('Um '+fmt(c.bed),Math.round(c.atBed)+' mg',c.E.length?(c.ok?'passt':'zu viel'):'',okc)}</div>
+   <p class="legend">grün = schlaffreundlich · rot = über ${RED} mg · ▲ = Wert zur Schlafenszeit${rising?' · gestrichelt = kommt noch':''}</p>`;
+}
 function tip(c){
   if(!c.E.length) return `Noch nichts eingetragen. Tippe unten auf dein Getränk, es wird mit der aktuellen Uhrzeit gespeichert.`;
   const flag=c.ok?`<span class="flag ok">passt</span>, schlaffreundlich ${dur(c.bed-c.clear)} vor dem Schlafen.`:`<span class="flag no">zu viel</span>, schlaffreundlich erst ${dur(c.clear-c.bed)} nach deiner Schlafenszeit.`;
   const more=c.latest?` Noch ein Single-Espresso geht bis <b>${fmt(c.latest)}</b>.`:` Heute lieber kein Koffein mehr.`;
   return `Zur Schlafenszeit (${fmt(c.bed)}) sind es ${Math.round(c.atBed)} mg: ${flag}${more}`;
 }
+const NEXT={curve:'ring',ring:'bat',bat:'curve'},VNAME={curve:'Kurve',ring:'Tacho',bat:'Akku'};
 function render(){
   G=null;
   S.entries=S.entries.filter(e=>e.t>Date.now()-48*HR);
-  const c=compute(),other=S.view==='ring'?'curve':'ring';
-  const view=S.view==='ring'?ring(c):`<div class="now"><div class="mg tabnum">${Math.round(c.lvl)}<small> mg jetzt</small></div><div class="r">schlaffreundlich ab<b>${fmtD(c.clear)}</b></div></div>${chart(c)}`;
+  const c=compute(),other=NEXT[S.view]||'ring';
+  const view=S.view==='ring'?ring(c):S.view==='bat'?bat(c):`<div class="now"><div class="mg tabnum">${Math.round(c.lvl)}<small> mg jetzt</small></div><div class="r">schlaffreundlich ab<b>${fmtD(c.clear)}</b></div></div>${chart(c)}`;
   const log=c.E.slice().sort((a,b)=>b.t-a.t);
   document.getElementById('app').innerHTML=`
   <div class="top"><div class="brand">Halb<i>wert</i></div><div class="btns">
-    <button type="button" class="pillbtn" id="toggle" data-view="${other}" aria-label="Ansicht wechseln zu ${other==='ring'?'Tacho':'Kurve'}">${ICON[other]}${other==='ring'?'Tacho':'Kurve'}</button>
+    <button type="button" class="pillbtn" id="toggle" data-view="${other}" aria-label="Ansicht wechseln zu ${VNAME[other]}">${ICON[other]}${VNAME[other]}</button>
     <button type="button" class="pillbtn round" id="gear" aria-label="Einstellungen">${ICON.gear}</button></div></div>
   <div class="view">${view}</div>
   <div class="tip">${tip(c)}</div>
@@ -305,7 +331,7 @@ app.addEventListener('click',e=>{
   const a=e.target.closest('[data-add]'),d=e.target.closest('[data-del]');
   if(a){const dr=byId(a.dataset.add);S.entries.push({id:dr.id,t:Date.now(),mg:dr.mg});save();sweep=true;render()}
   if(d){S.entries=S.entries.filter(x=>x.t!==+d.dataset.del);save();render()}
-  if(e.target.closest('#toggle')){S.view=S.view==='ring'?'curve':'ring';save();render();document.getElementById('toggle').focus()}
+  if(e.target.closest('#toggle')){S.view=NEXT[S.view]||'ring';save();render();document.getElementById('toggle').focus()}
   if(e.target.closest('#gear')){bed.value=S.bed;hl.value=String(S.hl);g1.value=String(S.g1).replace('.',',');g2.value=String(S.g2).replace('.',',');wipe.dataset.sure='';wipe.textContent='Alle Einträge löschen';dlg.showModal()}
 });
 // Uhrzeit eines Eintrags ändern: gleicher Tag; liegt sie in der Zukunft, gilt der Vortag.
