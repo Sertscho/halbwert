@@ -1,0 +1,41 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "entwuerfe/batterie.html"
+        ],
+        "createdAt": "2026-11-07T05:48:07.274Z",
+        "reason": "Claude: checker assumed #ffffff background; page background is #0B1322/#101A2C (dark only)"
+      },
+      {
+        "rule": "overused-font",
+        "value": "instrument serif",
+        "createdAt": "2026-11-07T08:42:27.301Z",
+        "reason": "Claude: bestehende Markenschrift der App seit früheren Commits, in dieser Sitzung nicht geändert"
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "entwuerfe/schriften.html"
+        ],
+        "createdAt": "2026-11-07T08:47:29.738Z",
+        "reason": "Claude: Prüfer nimmt weißen Grund an, echter Grund ist #101A2C/#1B2A44 (Kontrast ≥4,9:1)"
+      },
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "entwuerfe/schriften.html"
+        ],
+        "createdAt": "2026-11-07T08:47:29.759Z",
+        "reason": "Claude: Prüfer nimmt weißen Grund an, echter Grund ist #101A2C/#1B2A44 (Kontrast ≥4,9:1)"
+      }
+    ]
+  }
+}

@@ -14,15 +14,15 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
 :root{
   color-scheme:dark;
   --bg:#101A2C; --card:#172338; --edge:#24344F; --grid:#22304A;
   --tx:#EFE6DA; --mu:#8D97AC; --mo:#B07A4F; --ac:#E6C9A0;
   --good:#7FBF8E; --warn:#E39A5C; --red:#E0574B;
-  --f-ui:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
-  --f-disp:"Instrument Serif",Georgia,serif;
+  --f-ui:"Bricolage Grotesque",system-ui,-apple-system,sans-serif;
+  --f-disp:"Bricolage Grotesque",system-ui,sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,monospace;
 }
 *{box-sizing:border-box}
@@ -101,6 +101,7 @@ dialog .sbtn.main{background:var(--ac);color:#101A2C;border-color:var(--ac);font
 dialog .sbtn.danger{color:var(--warn)}
 dialog .small{font-size:12px;color:var(--mu);line-height:1.5;margin:0}
 dialog .small a{color:var(--ac)}
+.brand,h3,dialog h2,.mg,.st b{font-weight:800;letter-spacing:-.03em}.mg small{font-weight:400;letter-spacing:0;margin-left:4px}.brand i,h3{font-style:normal}.brand i{color:var(--mo)}h3{font-size:19px}
 </style>
 </head>
 <body>
@@ -260,13 +261,13 @@ function ring(c){
   const cx=100,cy=104,R=68,L=c.lvl,a=v=>-135+Math.min(v,GMAX)/GMAX*270;let ticks='';
   for(let v=0;v<=GMAX;v+=10){const big=v%100===0,mid=v%50===0,[x0,y0]=P(cx,cy,R+13,a(v)),[x1,y1]=P(cx,cy,R+(big?20:mid?18:16),a(v));const col=v===RED?'#E0574B':big?'#8D97AC':'#3A4C6B';
     ticks+=`<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${col}" stroke-width="${big?2:1}"/>`;
-    if(big){const[x,y]=P(cx,cy,R+28,a(v));ticks+=`<text x="${x.toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="${v===RED?'#E0574B':'#8D97AC'}">${v}</text>`}}
+    if(big){const[x,y]=P(cx,cy,R+28,a(v));ticks+=`<text x="${x.toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="middle" style="font-family:var(--f-mono)" font-size="9" fill="${v===RED?'#E0574B':'#8D97AC'}">${v}</text>`}}
   G={deg:a(L),peakDeg:pk>L+3&&pkT>c.now?a(pk):a(L)};
   const red=L>=RED,[nx,ny]=P(cx,cy,R-2,a(L)),[bx,by]=P(cx,cy,R+5,a(c.atBed)),needle=red?'#E0574B':'#E6C9A0';
   let fill=`<path d="${arc(cx,cy,R+5,-135,a(Math.min(L,LIMIT)))}" stroke="#7FBF8E" stroke-width="14" fill="none"/>`;
   if(L>LIMIT)fill+=`<path d="${arc(cx,cy,R+5,a(LIMIT),a(Math.min(L,RED)))}" stroke="#B07A4F" stroke-width="14" fill="none"/>`;
   if(L>RED)fill+=`<path d="${arc(cx,cy,R+5,a(RED),a(L))}" stroke="#E0574B" stroke-width="14" fill="none"/>`;
-  const lab=(deg,txt,col)=>{const[x,y]=P(cx,cy,R+28,deg);return `<text x="${x.toFixed(1)}" y="${(y+14).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="${col}">${txt}</text>`};
+  const lab=(deg,txt,col)=>{const[x,y]=P(cx,cy,R+28,deg);return `<text x="${x.toFixed(1)}" y="${(y+14).toFixed(1)}" text-anchor="middle" style="font-family:var(--f-ui)" font-size="8" fill="${col}">${txt}</text>`};
   const svg=`<svg viewBox="0 0 200 190" role="img" aria-label="Messinstrument, ${Math.round(L)} mg Koffein">
    <path d="${arc(cx,cy,R+5,-135,a(LIMIT))}" stroke="#7FBF8E" stroke-opacity=".22" stroke-width="14" fill="none"/>
    <path d="${arc(cx,cy,R+5,a(LIMIT),a(RED))}" stroke="#1B2A44" stroke-width="14" fill="none"/>
@@ -276,8 +277,8 @@ function ring(c){
    <g class="ndl" style="transform-origin:${cx}px ${cy}px;transform-box:view-box;transform:rotate(${a(L)}deg)"><path d="${needlePath(cx,cy,R-2,0)}" fill="${needle}" stroke="${needle}" stroke-width="1.5" stroke-linejoin="round"/></g>
    <circle cx="${cx}" cy="${cy}" r="9" fill="${needle}"/><circle cx="${cx}" cy="${cy}" r="3.5" fill="#101A2C"/>
    ${c.E.length?`<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="4" fill="none" stroke="#E6C9A0" stroke-width="1.6"><title>Wert zur Schlafenszeit</title></circle>`:''}
-   <text x="${cx}" y="${cy+46}" text-anchor="middle" font-family="Instrument Serif,Georgia,serif" font-size="34" fill="${red?'#E0574B':'#EFE6DA'}">${Math.round(L)}</text>
-   <text x="${cx}" y="${cy+60}" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#8D97AC" letter-spacing=".5">MG JETZT</text>
+   <text x="${cx}" y="${cy+46}" text-anchor="middle" style="font-family:var(--f-disp)" font-size="34" fill="${red?'#E0574B':'#EFE6DA'}">${Math.round(L)}</text>
+   <text x="${cx}" y="${cy+60}" text-anchor="middle" style="font-family:var(--f-ui)" font-size="9" fill="#8D97AC" letter-spacing=".5">MG JETZT</text>
    ${lab(-135,'SCHLAF','#7FBF8E')}${lab(135,'ZU VIEL','#E0574B')}</svg>`;
   const okc=c.ok?'ok':'no';
   return `<div class="rw"><div class="side">${st('Bereit ab',fmtD(c.clear).replace('morgen ',''),c.clear>Date.now()+MIN?rel(c.clear):'',c.E.length?okc:'ok')}${st('Ganz raus',fmtD(c.out).replace('morgen ',''),c.out>Date.now()+MIN?rel(c.out):'')}</div>${svg}
@@ -290,7 +291,7 @@ function bat(c){
   const seg=(a,b,col)=>b>a?`<rect x="${xv(a).toFixed(1)}" y="${IY}" width="${(xv(b)-xv(a)).toFixed(1)}" height="${IH}" fill="${col}"/>`:'';
   const fill=L>0.5?seg(0,Math.min(L,LIMIT),'#7FBF8E')+seg(LIMIT,Math.min(L,RED),'#B07A4F')+seg(RED,L,'#E0574B'):'';
   let ticks='';for(let v=0;v<=GMAX;v+=50){const big=v%100===0,x=xv(v),col=v===RED?'#E0574B':big?'#8D97AC':'#3A4C6B';
-    ticks+=`<line x1="${x}" x2="${x}" y1="${BY+BH+5}" y2="${BY+BH+(big?11:8)}" stroke="${col}" stroke-width="${big?1.6:1}"/>`+(big?`<text x="${x}" y="${BY+BH+22}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="${v===RED?'#E0574B':'#8D97AC'}">${v}</text>`:'')}
+    ticks+=`<line x1="${x}" x2="${x}" y1="${BY+BH+5}" y2="${BY+BH+(big?11:8)}" stroke="${col}" stroke-width="${big?1.6:1}"/>`+(big?`<text x="${x}" y="${BY+BH+22}" text-anchor="middle" style="font-family:var(--f-mono)" font-size="9" fill="${v===RED?'#E0574B':'#8D97AC'}">${v}</text>`:'')}
   const rising=pk>L+3&&pkT>c.now;
   const ghost=rising?`<rect x="${xv(L).toFixed(1)}" y="${IY+1}" width="${(xv(pk)-xv(L)).toFixed(1)}" height="${IH-2}" fill="none" stroke="#E6C9A0" stroke-opacity=".6" stroke-width="1.2" stroke-dasharray="4 3"><title>So weit steigt der Wert noch</title></rect>`:'';
   const bx=xv(c.atBed),bed=c.E.length?`<path d="M${bx.toFixed(1)} ${BY+BH+2} l-5 8 h10z" fill="#E6C9A0"><title>Wert zur Schlafenszeit</title></path>`:'';
