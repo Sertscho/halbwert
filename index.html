@@ -220,7 +220,7 @@ function chart(c){
   const past=pts.filter(p=>p[0]<=c.now);
   const area=past.length>1?`M${X(t0)} ${Y(0)} `+past.map(p=>'L'+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join(' ')+` L${X(past[past.length-1][0]).toFixed(1)} ${Y(0)} Z`:'';
   const step=(t1-t0)>14*HR?4*HR:3*HR;let ticks='';
-  for(let t=Math.ceil(t0/step)*step;t<=t1;t+=step)ticks+=`<text x="${X(t)}" y="${Hh-6}" text-anchor="middle" fill="#8D97AC" font-size="10">${new Date(t).getHours()} Uhr</text><line x1="${X(t)}" x2="${X(t)}" y1="${pt}" y2="${Hh-pb}" stroke="#22304A"/>`;
+  for(let t=Math.ceil(t0/step)*step;t<=t1;t+=step)ticks+=`<text x="${X(t)}" y="${Hh-6}" text-anchor="middle" fill="#8D97AC" font-size="10">${new Date(t).getHours()}</text><line x1="${X(t)}" x2="${X(t)}" y1="${pt}" y2="${Hh-pb}" stroke="#22304A"/>`;
   return `<svg class="chart" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Koffeinkurve, jetzt ${Math.round(c.lvl)} mg">
    ${ticks}
    <text x="${pl-4}" y="${Y(ym)+4}" text-anchor="end" fill="#8D97AC" font-size="10">${ym}</text>
