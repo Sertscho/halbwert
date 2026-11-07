@@ -13,6 +13,7 @@ Zeigt, wie viel Koffein gerade in deinem Körper ist und ab wann du schlaffreund
 ## Grundlagen
 - Abbau: 1-Kompartiment-Modell, Halbwertszeit 3/5/8 h wählbar ([Grzegorzewski 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8914174/))
 - Schlafgrenze 30 mg, abgeleitet aus [Gardiner 2023](https://pubmed.ncbi.nlm.nih.gov/36870101/) (~107 mg mindestens 8,8 h vor dem Schlafen)
+- Trainingsbereich 3–6 mg/kg Körpergewicht (blau in allen Ansichten), nach [ISSN-Positionspapier, Guest 2021](https://pubmed.ncbi.nlm.nih.gov/33388079/) und Meta-Analysen; über 6 mg/kg kein Zusatznutzen. Gewicht in den Einstellungen.
 - Ninja: ~7,5 mg Koffein pro Gramm Pulver (Schätzung). McCafé: Schätzung. Red Bull (80 mg) und Monster (150 mg): Herstellerangaben.
 
 Richtwerte, keine medizinische Beratung.
